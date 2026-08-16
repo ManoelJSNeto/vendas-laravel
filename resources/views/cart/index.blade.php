@@ -61,9 +61,9 @@
                 </div>
 
                 <div class="mt-4 text-right">
-                    <button disabled class="bg-gray-300 text-gray-600 px-6 py-2 rounded-md cursor-not-allowed">
-                        Finalizar Compra (em breve)
-                    </button>
+                    <a href="{{ route('orders.create') }}" class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">
+                        Finalizar Compra
+                    </a>
                 </div>
             @endif
         </div>
