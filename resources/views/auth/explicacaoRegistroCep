@@ -1,0 +1,300 @@
+# Professor Nilo — Formulários de Endereço
+
+## O que é o Alpine.js
+
+**Alpine.js** é uma biblioteca JavaScript leve que o Breeze já instala por padrão. Ela permite adicionar comportamento interativo, como esconder/mostrar elementos e reagir a eventos, diretamente no HTML, sem precisar escrever um arquivo `.js` separado.
+
+Tudo fica dentro dos atributos `x-*` da própria tag.
+
+### Modelo — formato genérico
+
+```html
+<div x-data="{ variavel: 'valor inicial' }">
+    <input x-model="variavel" @evento="funcao()">
+    <span x-show="condicao">Texto condicional</span>
+</div>
+```
+
+### Principais atributos
+
+* **`x-data`** → declara um "estado" (variáveis) que só existe dentro dessa `<div>`.
+* **`x-model`** → liga o valor do campo à variável (**two-way binding**). Quando o usuário digita no campo, a variável é atualizada automaticamente.
+* **`@evento`** → escuta um evento do navegador, como clique ou saída de foco, e executa uma função quando ele acontece.
+* **`x-show`** → mostra ou esconde um elemento com base em uma condição, sem precisar de JavaScript separado.
+
+---
+
+## No nosso caso
+
+```html
+<div x-data="{
+    cep: '',
+    buscando: false,
+
+    async buscarCep() {
+        ...
+    }
+}">
+    <input name="cep" x-model="cep" @blur="buscarCep()">
+
+    <span x-show="buscando">
+        Buscando endereço...
+    </span>
+</div>
+```
+
+### Variáveis e eventos
+
+* **`cep: ''`** → variável que guarda o que o usuário está digitando no campo CEP.
+* **`buscando: false`** → variável de controle que liga/desliga a mensagem **"Buscando..."**.
+* **`@blur="buscarCep()"`** → `blur` é o evento disparado quando o usuário sai do campo, por exemplo, ao clicar em outro lugar da tela.
+
+Assim que o usuário sai do campo CEP, a função `buscarCep()` é executada automaticamente. Não é necessário criar um botão **"Buscar"**.
+
+---
+
+# O que é o `fetch` e por que usamos?
+
+`fetch` é uma funcionalidade nativa do JavaScript utilizada para fazer uma requisição HTTP para uma URL externa diretamente pelo navegador, sem precisar passar pelo backend do Laravel.
+
+### Modelo — formato genérico
+
+```javascript
+async function buscarDados() {
+    let resposta = await fetch('https://api-externa.com/dados');
+    let json = await resposta.json();
+
+    console.log(json);
+}
+```
+
+### Como funciona?
+
+* **`fetch(url)`** → dispara uma chamada HTTP para a URL. Por padrão, utiliza o método `GET`.
+* **`await`** → espera a resposta chegar antes de continuar a execução do código. A página não fica travada; apenas essa função aguarda a resposta.
+* **`.json()`** → converte a resposta recebida em JSON para um objeto JavaScript que pode ser utilizado no código.
+
+---
+
+# No nosso caso
+
+```javascript
+async buscarCep() {
+    let cepLimpo = this.cep.replace(/\D/g, '');
+
+    if (cepLimpo.length !== 8) return;
+
+    this.buscando = true;
+
+    let res = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+    );
+
+    let data = await res.json();
+
+    if (!data.erro) {
+        document.getElementById('logradouro').value = data.logradouro;
+        document.getElementById('bairro').value = data.bairro;
+        document.getElementById('cidade').value = data.localidade;
+        document.getElementById('uf').value = data.uf;
+    }
+
+    this.buscando = false;
+}
+```
+
+## Explicação do código
+
+### 1. Limpeza do CEP
+
+```javascript
+let cepLimpo = this.cep.replace(/\D/g, '');
+```
+
+O `.replace(/\D/g, '')` remove tudo que **não é um dígito**.
+
+Por exemplo:
+
+```text
+01310-100
+```
+
+vira:
+
+```text
+01310100
+```
+
+Isso é necessário porque a API ViaCEP espera o CEP somente com números.
+
+---
+
+### 2. Verificação do tamanho
+
+```javascript
+if (cepLimpo.length !== 8) return;
+```
+
+Um CEP brasileiro possui **8 dígitos**.
+
+Se o CEP não tiver exatamente 8 dígitos, a função é encerrada com `return` e nenhuma requisição é feita.
+
+Isso evita chamadas desnecessárias para a API.
+
+---
+
+### 3. Ativação da mensagem de carregamento
+
+```javascript
+this.buscando = true;
+```
+
+Altera a variável `buscando` para `true`.
+
+Como temos:
+
+```html
+<span x-show="buscando">
+    Buscando endereço...
+</span>
+```
+
+o Alpine.js automaticamente exibe a mensagem:
+
+> Buscando endereço...
+
+---
+
+### 4. Consulta à API ViaCEP
+
+```javascript
+let res = await fetch(
+    `https://viacep.com.br/ws/${cepLimpo}/json/`
+);
+```
+
+Esse é o formato de URL utilizado pela API ViaCEP:
+
+```text
+https://viacep.com.br/ws/{CEP}/json/
+```
+
+O trecho:
+
+```javascript
+${cepLimpo}
+```
+
+insere o valor da variável dentro da string.
+
+Por exemplo:
+
+```javascript
+cepLimpo = "01310100"
+```
+
+gera:
+
+```text
+https://viacep.com.br/ws/01310100/json/
+```
+
+Esse recurso é chamado de **template string** no JavaScript.
+
+---
+
+### 5. Conversão da resposta para JSON
+
+```javascript
+let data = await res.json();
+```
+
+A resposta da API é convertida para um objeto JavaScript através do `.json()`.
+
+Assim podemos acessar os dados retornados usando propriedades como:
+
+```javascript
+data.logradouro
+data.bairro
+data.localidade
+data.uf
+```
+
+---
+
+### 6. Verificação do CEP
+
+```javascript
+if (!data.erro) {
+```
+
+A API ViaCEP retorna:
+
+```json
+{
+    "erro": true
+}
+```
+
+quando o CEP não existe.
+
+Por isso verificamos:
+
+```javascript
+!data.erro
+```
+
+Se não houver erro, significa que os dados do endereço podem ser utilizados.
+
+---
+
+### 7. Preenchimento automático dos campos
+
+```javascript
+document.getElementById('logradouro').value = data.logradouro;
+document.getElementById('bairro').value = data.bairro;
+document.getElementById('cidade').value = data.localidade;
+document.getElementById('uf').value = data.uf;
+```
+
+`document.getElementById()` localiza um elemento HTML pelo seu `id`.
+
+Depois, usamos `.value` para inserir o valor retornado pela API no campo do formulário.
+
+Por exemplo:
+
+```javascript
+document.getElementById('logradouro').value = data.logradouro;
+```
+
+pega o campo:
+
+```html
+<input id="logradouro">
+```
+
+e coloca nele o logradouro retornado pela ViaCEP.
+
+### Resultado
+
+O fluxo completo funciona assim:
+
+```text
+Usuário digita o CEP
+        ↓
+Usuário sai do campo (blur)
+        ↓
+buscarCep() é executada
+        ↓
+CEP é limpo
+        ↓
+Verifica se possui 8 dígitos
+        ↓
+fetch() consulta a ViaCEP
+        ↓
+Resposta é convertida para JSON
+        ↓
+Dados do endereço são obtidos
+        ↓
+Campos são preenchidos automaticamente
+```

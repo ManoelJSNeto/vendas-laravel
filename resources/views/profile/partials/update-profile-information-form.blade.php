@@ -24,6 +24,18 @@
         </div>
 
         <div>
+            <x-input-label for="cpf" :value="__('CPF')" />
+            <x-text-input id="cpf" type="text" class="mt-1 block w-full bg-gray-100 text-gray-500" value="{{ $user->cpf }}" disabled readonly />
+            <p class="text-xs text-gray-500 mt-1">{{ __('O CPF não pode ser alterado.') }}</p>
+        </div>
+
+        <div>
+            <x-input-label for="telefone" :value="__('Telefone')" />
+            <x-text-input id="telefone" name="telefone" type="text" class="mt-1 block w-full" :value="old('telefone', $user->telefone)" required maxlength="20" />
+            <x-input-error class="mt-2" :messages="$errors->get('telefone')" />
+        </div>
+
+        <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />

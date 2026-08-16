@@ -18,6 +18,7 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'address' => $request->user()->addresses()->first(),
         ]);
     }
 
@@ -35,6 +36,26 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    public function updateAddress(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'cep' => ['required', 'string', 'max:9'],
+            'logradouro' => ['required', 'string', 'max:255'],
+            'numero' => ['nullable', 'string', 'max:20'],
+            'complemento' => ['nullable', 'string', 'max:255'],
+            'bairro' => ['required', 'string', 'max:255'],
+            'cidade' => ['required', 'string', 'max:255'],
+            'uf' => ['required', 'string', 'max:2'],
+        ]);
+
+        $request->user()->addresses()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            $request->only(['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf'])
+        );
+
+        return Redirect::route('profile.edit')->with('status', 'address-updated');
     }
 
     /**
