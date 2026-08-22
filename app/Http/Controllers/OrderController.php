@@ -73,6 +73,13 @@ class OrderController extends Controller
         return redirect()->route('orders.show', $order)->with('status', 'Pedido realizado com sucesso!');
     }
 
+    public function index(Request $request): View
+    {
+        $orders = $request->user()->orders()->latest()->get();
+
+        return view('orders.index', compact('orders'));
+    }
+
     public function show(Order $order): View
     {
         $order->load('items.product', 'address');
