@@ -14,6 +14,36 @@
                 </div>
             @endif
 
+            <form method="GET" action="{{ route('products.index') }}" class="mb-6 bg-white p-4 rounded-lg shadow-sm flex flex-wrap gap-3 items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm text-gray-600 mb-1">Buscar</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nome do produto..."
+                        class="w-full rounded-md border-gray-300 text-sm" />
+                </div>
+
+                <div class="min-w-[180px]">
+                    <label class="block text-sm text-gray-600 mb-1">Categoria</label>
+                    <select name="category_id" class="w-full rounded-md border-gray-300 text-sm">
+                        <option value="">Todas</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button type="submit" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700">
+                    Filtrar
+                </button>
+
+                @if (request('search') || request('category_id'))
+                    <a href="{{ route('products.index') }}" class="text-sm text-gray-500 hover:underline">
+                        Limpar filtros
+                    </a>
+                @endif
+            </form>
+
             <div class="mb-4">
                 <a href="{{ route('cart.index') }}" class="text-indigo-600 hover:underline text-sm">
                     Ver carrinho →
