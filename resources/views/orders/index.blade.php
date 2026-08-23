@@ -16,7 +16,7 @@
             @else
                 <div class="bg-white rounded-lg shadow-sm divide-y">
                     @foreach ($orders as $order)
-                        <a href="{{ route('orders.show', $order) }}" class="block p-4 hover:bg-gray-50">
+                        <a href="{{ route('orders.show', $order->order_number) }}" class="block p-4 hover:bg-gray-50">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="font-semibold text-gray-900">Pedido #{{ $order->order_number }}</p>

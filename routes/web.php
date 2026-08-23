@@ -25,14 +25,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/checkout', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{orderNumber}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('address.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/orders/{order}/pay', [PaymentController::class, 'show'])->name('payments.show');
-    Route::post('/orders/{order}/pay', [PaymentController::class, 'process'])->name('payments.process');
-    Route::get('/orders/{order}/boleto-pdf', function (\App\Models\Order $order) {
+    Route::get('/orders/{orderNumber}/pay', [PaymentController::class, 'show'])->name('payments.show');
+    Route::post('/orders/{orderNumber}/pay', [PaymentController::class, 'process'])->name('payments.process');
+    Route::get('/orders/{orderNumber}/boleto-pdf', function (\Illuminate\Http\Request $request, int $orderNumber) {
+        $order = $request->user()->orders()->where('order_number', $orderNumber)->firstOrFail();
         $barcode = \App\Services\BoletoGenerator::generateBarcode($order->id, (float) $order->total);
         $linhaDigitavel = \App\Services\BoletoGenerator::formatLinhaDigitavel($barcode);
 
@@ -40,7 +41,7 @@ Route::middleware('auth')->group(function () {
             'order' => $order->load('user'),
             'barcode' => $barcode,
             'linhaDigitavel' => $linhaDigitavel,
-        ])->download('boleto-pedido-'.$order->id.'.pdf');
+        ])->download('boleto-pedido-'.$order->order_number.'.pdf');
     })->name('payments.boleto-pdf');
 });
 

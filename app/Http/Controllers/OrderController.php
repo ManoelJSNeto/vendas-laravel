@@ -50,7 +50,7 @@ class OrderController extends Controller
         );
 
         $total = $cartItems->sum(fn ($item) => $item->subtotal());
-        
+
         $nextNumber = $request->user()->orders()->max('order_number') + 1;
 
         $order = Order::create([
@@ -73,7 +73,7 @@ class OrderController extends Controller
 
         $request->user()->cartItems()->delete();
 
-        return redirect()->route('orders.show', $order)->with('status', 'Pedido realizado com sucesso!');
+        return redirect()->route('orders.show', $order->order_number)->with('status', 'Pedido realizado com sucesso!');
     }
 
     public function index(Request $request): View
@@ -83,8 +83,9 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    public function show(Order $order): View
+    public function show(Request $request, int $orderNumber): View
     {
+        $order = $request->user()->orders()->where('order_number', $orderNumber)->firstOrFail();
         $order->load('items.product', 'address');
 
         return view('orders.show', compact('order'));

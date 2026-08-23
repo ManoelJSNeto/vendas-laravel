@@ -35,7 +35,7 @@
 
                 @if ($order->status === 'pending')
                     <div class="mt-4 pt-4 border-t">
-                        <a href="{{ route('payments.show', $order) }}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
+                        <a href="{{ route('payments.show', $order->order_number) }}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
                             Pagar Agora
                         </a>
                     </div>

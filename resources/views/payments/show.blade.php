@@ -29,7 +29,7 @@
                     <p class="text-sm text-gray-500 mt-4 mb-2">Ou use o Pix Copia e Cola:</p>
                     <div class="bg-gray-100 p-3 rounded-md text-xs break-all font-mono">{{ $pixPayload }}</div>
 
-                    <form method="POST" action="{{ route('payments.process', $order) }}" class="mt-6">
+                    <form method="POST" action="{{ route('payments.process', $order->order_number) }}" class="mt-6">
                         @csrf
                         <x-primary-button class="w-full justify-center py-3">
                             Já paguei, confirmar
@@ -45,12 +45,12 @@
                     <p class="text-sm text-gray-500 mb-1">Linha digitável:</p>
                     <div class="bg-gray-100 p-3 rounded-md text-sm font-mono mb-4">{{ $linhaDigitavel }}</div>
 
-                    <a href="{{ route('payments.boleto-pdf', $order) }}" target="_blank"
+                    <a href="{{ route('payments.boleto-pdf', $order->order_number) }}" target="_blank"
                         class="inline-block bg-gray-800 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-900">
                         Baixar boleto em PDF
                     </a>
 
-                    <form method="POST" action="{{ route('payments.process', $order) }}" class="mt-6">
+                    <form method="POST" action="{{ route('payments.process', $order->order_number) }}" class="mt-6">
                         @csrf
                         <x-primary-button class="w-full justify-center py-3">
                             Já paguei, confirmar
@@ -60,7 +60,7 @@
             @endif
 
             @if ($order->payment_method === 'cartao')
-                <form method="POST" action="{{ route('payments.process', $order) }}" class="bg-white rounded-lg shadow-sm p-6 space-y-4" x-data="{
+                <form method="POST" action="{{ route('payments.process', $order->order_number) }}" class="bg-white rounded-lg shadow-sm p-6 space-y-4" x-data="{
                     number: '',
                     brand: '',
                     detectBrand() {

@@ -15,8 +15,10 @@ use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
-    public function show(Order $order): View
+        public function show(Request $request, int $orderNumber): View
     {
+        $order = $request->user()->orders()->where('order_number', $orderNumber)->firstOrFail();
+
         $data = ['order' => $order];
 
         if ($order->payment_method === 'pix') {
@@ -25,7 +27,7 @@ class PaymentController extends Controller
                 'Vendas Laravel LTDA',
                 'Presidente Prudente',
                 (float) $order->total,
-                'PEDIDO'.$order->id
+                'PEDIDO'.$order->order_number
             );
 
             $qrCode = new QrCode($payload);
@@ -45,8 +47,10 @@ class PaymentController extends Controller
         return view('payments.show', $data);
     }
 
-    public function process(Request $request, Order $order): RedirectResponse
+    public function process(Request $request, int $orderNumber): RedirectResponse
     {
+        $order = $request->user()->orders()->where('order_number', $orderNumber)->firstOrFail();
+
         if ($order->payment_method === 'cartao') {
             $request->validate([
                 'card_number' => ['required', 'string'],
@@ -69,7 +73,7 @@ class PaymentController extends Controller
 
         Mail::to($order->user->email)->send(new OrderPaid($order));
 
-        return redirect()->route('orders.show', $order)->with('status', 'Pagamento aprovado com sucesso!');
+        return redirect()->route('orders.show', $order->order_number)->with('status', 'Pagamento aprovado com sucesso!');
     }
 
     private function isValidLuhn(string $number): bool
