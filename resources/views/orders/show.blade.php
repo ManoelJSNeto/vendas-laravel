@@ -32,6 +32,15 @@
                     <p class="text-sm text-gray-500 mb-1">Forma de pagamento</p>
                     <p class="font-medium capitalize">{{ $order->payment_method }}</p>
                 </div>
+
+                @if ($order->status === 'pending')
+                    <div class="mt-4 pt-4 border-t">
+                        <a href="{{ route('payments.show', $order) }}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
+                            Pagar Agora
+                        </a>
+                    </div>
+                @endif
+
             </div>
 
             <div class="bg-white rounded-lg shadow-sm p-6">

@@ -12,6 +12,7 @@ class Order extends Model
         'status',
         'payment_method',
         'total',
+        'paid_at',
     ];
 
     public function user()
@@ -27,5 +28,12 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+        protected function casts(): array
+    {
+        return [
+            'paid_at' => 'datetime',
+        ];
     }
 }
