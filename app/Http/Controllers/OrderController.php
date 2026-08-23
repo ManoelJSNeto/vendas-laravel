@@ -50,9 +50,12 @@ class OrderController extends Controller
         );
 
         $total = $cartItems->sum(fn ($item) => $item->subtotal());
+        
+        $nextNumber = $request->user()->orders()->max('order_number') + 1;
 
         $order = Order::create([
             'user_id' => $request->user()->id,
+            'order_number' => $nextNumber,
             'address_id' => $address->id,
             'status' => 'pending',
             'payment_method' => $request->payment_method,

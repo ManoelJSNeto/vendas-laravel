@@ -19,7 +19,7 @@
     <div class="container">
         <div class="header">
             <h1>Nota Fiscal Simulada</h1>
-            <p style="margin: 4px 0 0; font-size: 13px;">Pedido #{{ $order->id }}</p>
+            <p style="margin: 4px 0 0; font-size: 13px;">Pedido #{{ $order->order_number }}</p>
         </div>
 
         <div class="content">

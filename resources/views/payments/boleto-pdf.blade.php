@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <h1>Boleto Bancário — Pedido #{{ $order->id }}</h1>
+    <h1>Boleto Bancário — Pedido #{{ $order->order_number }}</h1>
 
     <div class="box">
         <div class="row">

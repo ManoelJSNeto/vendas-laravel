@@ -20,7 +20,7 @@ class OrderPaid extends Mailable
 
     public function build()
     {
-        return $this->subject('Nota Fiscal - Pedido #'.$this->order->id)
+        return $this->subject('Nota Fiscal - Pedido #'.$this->order->order_number)
             ->view('emails.order-paid');
     }
 }

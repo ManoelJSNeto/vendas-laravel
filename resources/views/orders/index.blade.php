@@ -19,7 +19,7 @@
                         <a href="{{ route('orders.show', $order) }}" class="block p-4 hover:bg-gray-50">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="font-semibold text-gray-900">Pedido #{{ $order->id }}</p>
+                                    <p class="font-semibold text-gray-900">Pedido #{{ $order->order_number }}</p>
                                     <p class="text-sm text-gray-500">{{ $order->created_at->format('d/m/Y H:i') }}</p>
                                 </div>
                                 <div class="text-right">
