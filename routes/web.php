@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
@@ -43,6 +43,10 @@ Route::middleware('auth')->group(function () {
             'linhaDigitavel' => $linhaDigitavel,
         ])->download('boleto-pedido-'.$order->order_number.'.pdf');
     })->name('payments.boleto-pdf');
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
 });
 
 require __DIR__.'/auth.php';
