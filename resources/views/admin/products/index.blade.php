@@ -40,7 +40,12 @@
                                 <td class="p-3">{{ $product->stock }}</td>
                                 <td class="p-3 text-right space-x-2">
                                     <a href="{{ route('admin.products.edit', $product) }}" class="text-indigo-600 hover:underline text-xs">Editar</a>
-                                    <span class="text-gray-300 text-xs">excluir em breve</span>
+                                    <form method="POST" action="{{ route('admin.products.destroy', $product) }}" class="inline"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline text-xs">Excluir</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach

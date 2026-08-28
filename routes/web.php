@@ -51,6 +51,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
     Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
     Route::patch('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
+Route::delete('/products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
 });
 
 require __DIR__.'/auth.php';
