@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller
 {
@@ -14,5 +16,27 @@ class ProductController extends Controller
         $products = Product::with('category')->latest()->get();
 
         return view('admin.products.index', compact('products'));
+    }
+
+        public function create(): View
+    {
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.products.create', compact('categories'));
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+        ]);
+
+        Product::create($request->only(['name', 'category_id', 'description', 'price', 'stock']));
+
+        return redirect()->route('admin.products.index')->with('status', 'Produto criado com sucesso!');
     }
 }

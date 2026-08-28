@@ -14,6 +14,12 @@
                 </div>
             @endif
 
+            <div class="mb-4">
+                <a href="{{ route('admin.products.create') }}" class="inline-block bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700">
+                    + Novo Produto
+                </a>
+            </div>
+
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 text-left text-gray-500">
