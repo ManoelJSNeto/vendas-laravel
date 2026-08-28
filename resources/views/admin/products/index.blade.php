@@ -39,7 +39,8 @@
                                 <td class="p-3">R$ {{ number_format($product->price, 2, ',', '.') }}</td>
                                 <td class="p-3">{{ $product->stock }}</td>
                                 <td class="p-3 text-right space-x-2">
-                                    <span class="text-gray-400 text-xs">editar / excluir em breve</span>
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-indigo-600 hover:underline text-xs">Editar</a>
+                                    <span class="text-gray-300 text-xs">excluir em breve</span>
                                 </td>
                             </tr>
                         @endforeach

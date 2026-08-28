@@ -39,4 +39,26 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')->with('status', 'Produto criado com sucesso!');
     }
+
+        public function edit(Product $product): View
+    {
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.products.edit', compact('product', 'categories'));
+    }
+
+    public function update(Request $request, Product $product): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $product->update($request->only(['name', 'category_id', 'description', 'price', 'stock']));
+
+        return redirect()->route('admin.products.index')->with('status', 'Produto atualizado com sucesso!');
+    }
 }
