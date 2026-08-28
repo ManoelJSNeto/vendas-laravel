@@ -21,6 +21,11 @@
                     <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                         {{ __('Meus Pedidos') }}
                     </x-nav-link>
+                    @if (Auth::user()?->is_admin)
+                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.*')">
+                            {{ __('Painel Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -82,6 +87,11 @@
             <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                 {{ __('Meus Pedidos') }}
             </x-responsive-nav-link>
+            @if (Auth::user()?->is_admin)
+                <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.*')">
+                    {{ __('Painel Admin') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
