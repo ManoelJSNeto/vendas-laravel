@@ -11,7 +11,7 @@
                 </div>
 
                 <!-- Navigation Links -->
-                                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                         {{ __('Produtos') }}
                     </x-nav-link>
@@ -22,8 +22,11 @@
                         {{ __('Meus Pedidos') }}
                     </x-nav-link>
                     @if (Auth::user()?->is_admin)
-                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.*')">
-                            {{ __('Painel Admin') }}
+                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')">
+                            {{ __('Admin: Produtos') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                            {{ __('Admin: Vendas') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -88,8 +91,11 @@
                 {{ __('Meus Pedidos') }}
             </x-responsive-nav-link>
             @if (Auth::user()?->is_admin)
-                <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.*')">
-                    {{ __('Painel Admin') }}
+                <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')">
+                    {{ __('Admin: Produtos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                    {{ __('Admin: Vendas') }}
                 </x-responsive-nav-link>
             @endif
         </div>
