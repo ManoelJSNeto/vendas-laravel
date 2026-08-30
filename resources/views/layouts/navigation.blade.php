@@ -28,6 +28,9 @@
                         <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                             {{ __('Admin: Vendas') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Admin: Usuários') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -96,6 +99,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                     {{ __('Admin: Vendas') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Admin: Usuários') }}
                 </x-responsive-nav-link>
             @endif
         </div>
