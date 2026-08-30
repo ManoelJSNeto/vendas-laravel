@@ -2,6 +2,7 @@
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
@@ -34,6 +35,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/orders/{orderNumber}/pay', [PaymentController::class, 'show'])->name('payments.show');
     Route::post('/orders/{orderNumber}/pay', [PaymentController::class, 'process'])->name('payments.process');
+    Route::get('/addresses', [AddressController::class, 'index'])->name('addresses.index');
+    Route::post('/addresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::patch('/addresses/{address}/default', [AddressController::class, 'setDefault'])->name('addresses.set-default');
+    Route::delete('/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
     Route::get('/orders/{orderNumber}/boleto-pdf', function (\Illuminate\Http\Request $request, int $orderNumber) {
         $order = $request->user()->orders()->where('order_number', $orderNumber)->firstOrFail();
         $barcode = \App\Services\BoletoGenerator::generateBarcode($order->id, (float) $order->total);
