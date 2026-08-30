@@ -8,6 +8,7 @@ class Address extends Model
 {
     protected $fillable = [
         'user_id',
+        'label',
         'cep',
         'logradouro',
         'bairro',
@@ -15,6 +16,7 @@ class Address extends Model
         'uf',
         'numero',
         'complemento',
+        'is_default',
     ];
 
     public function user()
