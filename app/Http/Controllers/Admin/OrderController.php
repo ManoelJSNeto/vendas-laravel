@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(Request $request): View
+        public function index(Request $request): View
     {
         $allOrders = Order::with('user')->latest()->get();
 
@@ -19,6 +19,15 @@ class OrderController extends Controller
         $ticketMedio = $paidOrders->count() > 0 ? $totalVendido / $paidOrders->count() : 0;
         $pedidosPendentes = $allOrders->where('status', 'pending')->count();
 
+        $vendasPorDia = $paidOrders
+            ->groupBy(fn ($order) => $order->paid_at->format('d/m'))
+            ->map(fn ($group) => $group->sum('total'));
+
+        $pedidosPorStatus = [
+            'Pago' => $paidOrders->count(),
+            'Pendente' => $pedidosPendentes,
+        ];
+
         $orders = $allOrders;
 
         if ($request->filled('status')) {
@@ -26,7 +35,8 @@ class OrderController extends Controller
         }
 
         return view('admin.orders.index', compact(
-            'orders', 'totalVendido', 'totalPedidos', 'ticketMedio', 'pedidosPendentes'
+            'orders', 'totalVendido', 'totalPedidos', 'ticketMedio', 'pedidosPendentes',
+            'vendasPorDia', 'pedidosPorStatus'
         ));
     }
 }

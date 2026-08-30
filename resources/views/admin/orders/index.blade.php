@@ -26,7 +26,22 @@
                     <p class="text-2xl font-bold text-yellow-600">{{ $pedidosPendentes }}</p>
                 </div>
             </div>
-            
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div class="bg-white rounded-lg shadow-sm p-4">
+                    <p class="text-sm text-gray-500 mb-2">Vendas por Dia</p>
+                    <div class="relative h-64">
+                        <canvas id="vendasPorDiaChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-4">
+                    <p class="text-sm text-gray-500 mb-2">Pedidos por Status</p>
+                    <div class="relative h-64">
+                        <canvas id="pedidosPorStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <form method="GET" action="{{ route('admin.orders.index') }}" class="mb-4 bg-white p-4 rounded-lg shadow-sm flex items-end gap-3">
                 <div>
                     <label class="block text-sm text-gray-600 mb-1">Status</label>
@@ -82,4 +97,44 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            new Chart(document.getElementById('vendasPorDiaChart'), {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($vendasPorDia->keys()) !!},
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: {!! json_encode($vendasPorDia->values()) !!},
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                },
+            });
+
+            new Chart(document.getElementById('pedidosPorStatusChart'), {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode(array_keys($pedidosPorStatus)) !!},
+                    datasets: [{
+                        data: {!! json_encode(array_values($pedidosPorStatus)) !!},
+                        backgroundColor: ['#16a34a', '#eab308'],
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                },
+            });
+        </script>
+    @endpush
 </x-app-layout>
