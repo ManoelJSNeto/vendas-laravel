@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -33,21 +34,28 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        Product::create($request->only(['name', 'category_id', 'description', 'price', 'stock']));
+        $data = $request->only(['name', 'category_id', 'description', 'price', 'stock']);
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($data);
 
         return redirect()->route('admin.products.index')->with('status', 'Produto criado com sucesso!');
     }
 
-        public function edit(Product $product): View
+    public function edit(Product $product): View
     {
         $categories = Category::orderBy('name')->get();
 
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+        public function update(Request $request, Product $product): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -55,9 +63,20 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $product->update($request->only(['name', 'category_id', 'description', 'price', 'stock']));
+        $data = $request->only(['name', 'category_id', 'description', 'price', 'stock']);
+
+        if ($request->hasFile('image')) {
+            if ($product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($data);
 
         return redirect()->route('admin.products.index')->with('status', 'Produto atualizado com sucesso!');
     }

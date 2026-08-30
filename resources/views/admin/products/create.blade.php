@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('admin.products.store') }}" class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+            <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" class="bg-white rounded-lg shadow-sm p-6 space-y-4">
                 @csrf
 
                 <div>
@@ -33,6 +33,12 @@
                     <x-input-label for="description" :value="__('Descrição')" />
                     <textarea id="description" name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300">{{ old('description') }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                </div>
+
+                <div>
+                    <x-input-label for="image" :value="__('Imagem do Produto')" />
+                    <input id="image" name="image" type="file" accept="image/*" class="mt-1 block w-full text-sm" />
+                    <x-input-error :messages="$errors->get('image')" class="mt-2" />
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">

@@ -53,6 +53,13 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($products as $product)
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        @if ($product->image_path)
+                            <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover rounded-md mb-3">
+                        @else
+                            <div class="w-full h-40 bg-gray-100 rounded-md mb-3 flex items-center justify-center text-gray-400 text-sm">
+                                Sem imagem
+                            </div>
+                        @endif
                         <h3 class="text-lg font-bold text-gray-900">{{ $product->name }}</h3>
                         <p class="text-sm text-gray-500 mb-2">{{ $product->category->name ?? 'Sem categoria' }}</p>
                         <p class="text-gray-700 mb-3">{{ $product->description }}</p>

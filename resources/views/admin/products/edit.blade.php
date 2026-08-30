@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('admin.products.update', $product) }}" class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+            <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" class="bg-white rounded-lg shadow-sm p-6 space-y-4">
                 @csrf
                 @method('PATCH')
 
@@ -34,6 +34,16 @@
                     <x-input-label for="description" :value="__('Descrição')" />
                     <textarea id="description" name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300">{{ old('description', $product->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                </div>
+
+                <div>
+                    <x-input-label for="image" :value="__('Imagem do Produto')" />
+                    @if ($product->image_path)
+                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-24 h-24 object-cover rounded-md mt-2 mb-2">
+                    @endif
+                    <input id="image" name="image" type="file" accept="image/*" class="mt-1 block w-full text-sm" />
+                    <p class="text-xs text-gray-500 mt-1">Deixe em branco para manter a imagem atual.</p>
+                    <x-input-error :messages="$errors->get('image')" class="mt-2" />
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">

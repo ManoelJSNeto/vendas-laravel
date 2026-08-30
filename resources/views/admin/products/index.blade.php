@@ -24,6 +24,7 @@
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 text-left text-gray-500">
                         <tr>
+                            <th class="p-3">Imagem</th>
                             <th class="p-3">Nome</th>
                             <th class="p-3">Categoria</th>
                             <th class="p-3">Preço</th>
@@ -34,6 +35,13 @@
                     <tbody class="divide-y">
                         @foreach ($products as $product)
                             <tr>
+                                <td class="p-3">
+                                    @if ($product->image_path)
+                                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-12 h-12 object-cover rounded-md">
+                                    @else
+                                        <div class="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 text-xs">—</div>
+                                    @endif
+                                </td>
                                 <td class="p-3 font-medium text-gray-900">{{ $product->name }}</td>
                                 <td class="p-3 text-gray-500">{{ $product->category->name ?? 'Sem categoria' }}</td>
                                 <td class="p-3">R$ {{ number_format($product->price, 2, ',', '.') }}</td>
