@@ -25,70 +25,104 @@
             </div>
 
             <form method="POST" action="{{ route('orders.store') }}" class="bg-white rounded-lg shadow-sm p-6 space-y-4" x-data="{
-                cep: '{{ old('cep', $address->cep ?? '') }}',
+                usarNovo: {{ $addresses->isEmpty() ? 'true' : 'false' }},
+                cep: '',
+                logradouro: '',
+                bairro: '',
+                cidade: '',
+                uf: '',
                 buscando: false,
-                async buscarCep() {
-                    let cepLimpo = this.cep.replace(/\D/g, '');
-                    if (cepLimpo.length !== 8) return;
-                    this.buscando = true;
-                    try {
-                        let res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-                        let data = await res.json();
-                        if (!data.erro) {
-                            document.getElementById('logradouro').value = data.logradouro;
-                            document.getElementById('bairro').value = data.bairro;
-                            document.getElementById('cidade').value = data.localidade;
-                            document.getElementById('uf').value = data.uf;
+                timer: null,
+                buscarCep() {
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(async () => {
+                        let cepLimpo = this.cep.replace(/\D/g, '');
+                        if (cepLimpo.length !== 8) return;
+                        this.buscando = true;
+                        try {
+                            let res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+                            let data = await res.json();
+                            if (!data.erro) {
+                                this.logradouro = data.logradouro;
+                                this.bairro = data.bairro;
+                                this.cidade = data.localidade;
+                                this.uf = data.uf;
+                            }
+                        } catch (e) {
+                            console.error('Erro ao buscar CEP', e);
                         }
-                    } catch (e) {
-                        console.error('Erro ao buscar CEP', e);
-                    }
-                    this.buscando = false;
+                        this.buscando = false;
+                    }, 400);
                 }
             }">
                 @csrf
 
                 <h3 class="font-semibold text-gray-900">Endereço de Entrega</h3>
 
-                <div>
-                    <x-input-label for="cep" :value="__('CEP')" />
-                    <x-text-input id="cep" name="cep" type="text" class="mt-1 block w-full"
-                        x-model="cep" @blur="buscarCep()" maxlength="9" required />
-                    <span x-show="buscando" class="text-xs text-gray-500">Buscando endereço...</span>
-                    <x-input-error :messages="$errors->get('cep')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="logradouro" :value="__('Logradouro')" />
-                    <x-text-input id="logradouro" name="logradouro" type="text" class="mt-1 block w-full" :value="old('logradouro', $address->logradouro ?? '')" required />
-                    <x-input-error :messages="$errors->get('logradouro')" class="mt-2" />
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <x-input-label for="numero" :value="__('Número')" />
-                        <x-text-input id="numero" name="numero" type="text" class="mt-1 block w-full" :value="old('numero', $address->numero ?? '')" />
+                @if ($addresses->isNotEmpty())
+                    <div class="space-y-2" x-show="!usarNovo">
+                        @foreach ($addresses as $address)
+                            <label class="flex items-start gap-3 border rounded-md p-3 cursor-pointer">
+                                <input type="radio" name="address_id" value="{{ $address->id }}"
+                                    class="mt-1" {{ $loop->first ? 'checked' : '' }}>
+                                <span class="text-sm">
+                                    <span class="font-medium">{{ $address->label ?: 'Endereço' }}</span><br>
+                                    {{ $address->logradouro }}, {{ $address->numero }} — {{ $address->bairro }},
+                                    {{ $address->cidade }}/{{ $address->uf }}
+                                </span>
+                            </label>
+                        @endforeach
                     </div>
-                    <div>
-                        <x-input-label for="complemento" :value="__('Complemento')" />
-                        <x-text-input id="complemento" name="complemento" type="text" class="mt-1 block w-full" :value="old('complemento', $address->complemento ?? '')" />
-                    </div>
-                </div>
 
-                <div>
-                    <x-input-label for="bairro" :value="__('Bairro')" />
-                    <x-text-input id="bairro" name="bairro" type="text" class="mt-1 block w-full" :value="old('bairro', $address->bairro ?? '')" required />
-                    <x-input-error :messages="$errors->get('bairro')" class="mt-2" />
-                </div>
+                    <button type="button" @click="usarNovo = !usarNovo" class="text-sm text-indigo-600 hover:underline">
+                        <span x-show="!usarNovo">+ Usar um novo endereço</span>
+                        <span x-show="usarNovo">← Usar um endereço salvo</span>
+                    </button>
+                @endif
 
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="col-span-2">
-                        <x-input-label for="cidade" :value="__('Cidade')" />
-                        <x-text-input id="cidade" name="cidade" type="text" class="mt-1 block w-full" :value="old('cidade', $address->cidade ?? '')" required />
-                    </div>
+                <div class="space-y-4" x-show="usarNovo">
                     <div>
-                        <x-input-label for="uf" :value="__('UF')" />
-                        <x-text-input id="uf" name="uf" type="text" class="mt-1 block w-full" :value="old('uf', $address->uf ?? '')" maxlength="2" required />
+                        <x-input-label for="cep" :value="__('CEP')" />
+                        <x-text-input id="cep" name="cep" type="text" class="mt-1 block w-full"
+                            x-model="cep" @input="buscarCep()" maxlength="9" />
+                        <span x-show="buscando" class="text-xs text-gray-500">Buscando endereço...</span>
+                        <x-input-error :messages="$errors->get('cep')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="logradouro" :value="__('Logradouro')" />
+                        <x-text-input id="logradouro" name="logradouro" type="text" class="mt-1 block w-full" x-model="logradouro" />
+                        <x-input-error :messages="$errors->get('logradouro')" class="mt-2" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-input-label for="numero" :value="__('Número')" />
+                            <x-text-input id="numero" name="numero" type="text" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <x-input-label for="complemento" :value="__('Complemento')" />
+                            <x-text-input id="complemento" name="complemento" type="text" class="mt-1 block w-full" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-input-label for="bairro" :value="__('Bairro')" />
+                        <x-text-input id="bairro" name="bairro" type="text" class="mt-1 block w-full" x-model="bairro" />
+                        <x-input-error :messages="$errors->get('bairro')" class="mt-2" />
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-2">
+                            <x-input-label for="cidade" :value="__('Cidade')" />
+                            <x-text-input id="cidade" name="cidade" type="text" class="mt-1 block w-full" x-model="cidade" />
+                            <x-input-error :messages="$errors->get('cidade')" class="mt-2" />
+                        </div>
+                        <div>
+                            <x-input-label for="uf" :value="__('UF')" />
+                            <x-text-input id="uf" name="uf" type="text" class="mt-1 block w-full" x-model="uf" maxlength="2" />
+                            <x-input-error :messages="$errors->get('uf')" class="mt-2" />
+                        </div>
                     </div>
                 </div>
 

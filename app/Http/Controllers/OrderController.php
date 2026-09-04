@@ -20,9 +20,9 @@ class OrderController extends Controller
         }
 
         $total = $items->sum(fn ($item) => $item->subtotal());
-        $address = $request->user()->addresses()->first();
+        $addresses = $request->user()->addresses()->orderByDesc('is_default')->get();
 
-        return view('orders.checkout', compact('items', 'total', 'address'));
+        return view('orders.checkout', compact('items', 'total', 'addresses'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -34,20 +34,27 @@ class OrderController extends Controller
         }
 
         $request->validate([
-            'cep' => ['required', 'string', 'max:9'],
-            'logradouro' => ['required', 'string', 'max:255'],
+            'address_id' => ['nullable', 'exists:addresses,id'],
+            'cep' => ['required_without:address_id', 'nullable', 'string', 'max:9'],
+            'logradouro' => ['required_without:address_id', 'nullable', 'string', 'max:255'],
             'numero' => ['nullable', 'string', 'max:20'],
             'complemento' => ['nullable', 'string', 'max:255'],
-            'bairro' => ['required', 'string', 'max:255'],
-            'cidade' => ['required', 'string', 'max:255'],
-            'uf' => ['required', 'string', 'max:2'],
+            'bairro' => ['required_without:address_id', 'nullable', 'string', 'max:255'],
+            'cidade' => ['required_without:address_id', 'nullable', 'string', 'max:255'],
+            'uf' => ['required_without:address_id', 'nullable', 'string', 'max:2'],
             'payment_method' => ['required', 'in:pix,cartao,boleto'],
         ]);
 
-        $address = $request->user()->addresses()->updateOrCreate(
-            ['user_id' => $request->user()->id],
-            $request->only(['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf'])
-        );
+        if ($request->filled('address_id')) {
+            $address = $request->user()->addresses()->findOrFail($request->address_id);
+        } else {
+            $isFirst = $request->user()->addresses()->count() === 0;
+
+            $address = $request->user()->addresses()->create([
+                ...$request->only(['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf']),
+                'is_default' => $isFirst,
+            ]);
+        }
 
         $total = $cartItems->sum(fn ($item) => $item->subtotal());
 
