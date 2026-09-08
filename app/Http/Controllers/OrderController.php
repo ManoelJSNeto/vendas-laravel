@@ -85,6 +85,8 @@ class OrderController extends Controller
                 'quantity' => $item->quantity,
                 'unit_price' => $item->product->price,
             ]);
+
+            $item->product->decrement('stock', $item->quantity);
         }
 
         $request->user()->cartItems()->delete();
