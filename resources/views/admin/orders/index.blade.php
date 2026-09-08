@@ -49,6 +49,8 @@
                         <option value="">Todos</option>
                         <option value="pending" @selected(request('status') === 'pending')>Pendente</option>
                         <option value="paid" @selected(request('status') === 'paid')>Pago</option>
+                        <option value="shipped" @selected(request('status') === 'shipped')>Enviado</option>
+                        <option value="cancelled" @selected(request('status') === 'cancelled')>Cancelado</option>
                     </select>
                 </div>
                 <button type="submit" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700">
@@ -78,13 +80,23 @@
                                 <td class="p-3 text-gray-500">#{{ $order->order_number }}</td>
                                 <td class="p-3 text-gray-500">{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                 <td class="p-3">
-                                    <span @class([
-                                        'inline-block px-2 py-1 text-xs font-semibold rounded-full',
-                                        'bg-green-100 text-green-800' => $order->status === 'paid',
-                                        'bg-yellow-100 text-yellow-800' => $order->status === 'pending',
-                                    ])>
-                                        {{ ucfirst($order->status) }}
-                                    </span>
+                                    <form method="POST" action="{{ route('admin.orders.update-status', $order) }}"
+                                        onchange="this.submit()">
+                                        @csrf
+                                        @method('PATCH')
+                                        <select name="status" @class([
+                                            'text-xs font-semibold rounded-full border-0 py-1 pl-2 pr-6',
+                                            'bg-green-100 text-green-800' => $order->status === 'paid',
+                                            'bg-yellow-100 text-yellow-800' => $order->status === 'pending',
+                                            'bg-blue-100 text-blue-800' => $order->status === 'shipped',
+                                            'bg-red-100 text-red-800' => $order->status === 'cancelled',
+                                        ])>
+                                            <option value="pending" @selected($order->status === 'pending')>Pending</option>
+                                            <option value="paid" @selected($order->status === 'paid')>Paid</option>
+                                            <option value="shipped" @selected($order->status === 'shipped')>Shipped</option>
+                                            <option value="cancelled" @selected($order->status === 'cancelled')>Cancelled</option>
+                                        </select>
+                                    </form>
                                 </td>
                                 <td class="p-3 text-gray-500 capitalize">{{ $order->payment_method }}</td>
                                 <td class="p-3 text-right font-semibold text-green-600">
@@ -127,7 +139,7 @@
                     labels: {!! json_encode(array_keys($pedidosPorStatus)) !!},
                     datasets: [{
                         data: {!! json_encode(array_values($pedidosPorStatus)) !!},
-                        backgroundColor: ['#16a34a', '#eab308'],
+                        backgroundColor: ['#16a34a', '#eab308', '#3b82f6', '#dc2626'],
                     }],
                 },
                 options: {

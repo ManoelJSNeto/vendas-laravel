@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class OrderController extends Controller
 {
@@ -26,6 +27,8 @@ class OrderController extends Controller
         $pedidosPorStatus = [
             'Pago' => $paidOrders->count(),
             'Pendente' => $pedidosPendentes,
+            'Enviado' => $allOrders->where('status', 'shipped')->count(),
+            'Cancelado' => $allOrders->where('status', 'cancelled')->count(),
         ];
 
         $orders = $allOrders;
@@ -38,5 +41,16 @@ class OrderController extends Controller
             'orders', 'totalVendido', 'totalPedidos', 'ticketMedio', 'pedidosPendentes',
             'vendasPorDia', 'pedidosPorStatus'
         ));
+    }
+
+    public function updateStatus(Request $request, Order $order): RedirectResponse
+    {
+        $request->validate([
+            'status' => ['required', 'in:pending,paid,shipped,cancelled'],
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        return back()->with('status', 'Status do pedido atualizado!');
     }
 }
