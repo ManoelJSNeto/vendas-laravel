@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{orderNumber}', [OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{orderNumber}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('address.update');

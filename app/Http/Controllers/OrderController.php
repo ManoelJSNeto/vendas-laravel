@@ -109,4 +109,22 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
     
+    public function cancel(Request $request, int $orderNumber): RedirectResponse
+    {
+        $order = $request->user()->orders()->where('order_number', $orderNumber)->firstOrFail();
+
+        if ($order->status !== 'pending') {
+            return back()->with('status', 'Este pedido não pode mais ser cancelado.');
+        }
+
+        $order->load('items');
+
+        foreach ($order->items as $item) {
+            $item->product->increment('stock', $item->quantity);
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return redirect()->route('orders.show', $order->order_number)->with('status', 'Pedido cancelado com sucesso.');
+    }
 }

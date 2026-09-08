@@ -34,10 +34,18 @@
                 </div>
 
                 @if ($order->status === 'pending')
-                    <div class="mt-4 pt-4 border-t">
+                    <div class="mt-4 pt-4 border-t flex gap-3">
                         <a href="{{ route('payments.show', $order->order_number) }}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
                             Pagar Agora
                         </a>
+                        <form method="POST" action="{{ route('orders.cancel', $order->order_number) }}"
+                            onsubmit="return confirm('Tem certeza que deseja cancelar este pedido?');">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700">
+                                Cancelar Pedido
+                            </button>
+                        </form>
                     </div>
                 @endif
 
