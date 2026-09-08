@@ -8,6 +8,12 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
+            @if (session('status'))
+                <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md text-sm">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             <div class="mb-4">
                 <a href="{{ route('products.index') }}" class="text-indigo-600 hover:underline text-sm">
                     ← Continuar comprando

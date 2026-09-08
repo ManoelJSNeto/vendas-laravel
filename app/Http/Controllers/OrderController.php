@@ -25,12 +25,21 @@ class OrderController extends Controller
         return view('orders.checkout', compact('items', 'total', 'addresses'));
     }
 
-    public function store(Request $request): RedirectResponse
+        public function store(Request $request): RedirectResponse
     {
         $cartItems = $request->user()->cartItems()->with('product')->get();
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('status', 'Seu carrinho está vazio.');
+        }
+
+        foreach ($cartItems as $item) {
+            if ($item->quantity > $item->product->stock) {
+                return redirect()->route('cart.index')->with(
+                    'status',
+                    "Estoque insuficiente para \"{$item->product->name}\". Disponível: {$item->product->stock}."
+                );
+            }
         }
 
         $request->validate([
@@ -97,4 +106,5 @@ class OrderController extends Controller
 
         return view('orders.show', compact('order'));
     }
+    
 }
