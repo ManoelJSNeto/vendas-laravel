@@ -31,6 +31,9 @@
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                             {{ __('Admin: Usuários') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                            {{ __('Admin: Categorias') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -102,6 +105,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                     {{ __('Admin: Usuários') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                    {{ __('Admin: Categorias') }}
                 </x-responsive-nav-link>
             @endif
         </div>

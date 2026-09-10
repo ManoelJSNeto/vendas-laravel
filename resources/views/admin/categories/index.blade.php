@@ -34,7 +34,15 @@
                             <tr>
                                 <td class="p-3 font-medium text-gray-900">{{ $category->name }}</td>
                                 <td class="p-3 text-gray-500">{{ $category->products_count }}</td>
-                                <td class="p-3 text-right">—</td>
+                                <td class="p-3 text-right space-x-2">
+                                    <a href="{{ route('admin.categories.edit', $category) }}" class="text-indigo-600 hover:underline text-xs">Editar</a>
+                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="inline"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir esta categoria? Os produtos vinculados ficarão sem categoria.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline text-xs">Excluir</button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
