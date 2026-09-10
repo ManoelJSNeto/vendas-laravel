@@ -53,4 +53,11 @@ class OrderController extends Controller
 
         return back()->with('status', 'Status do pedido atualizado!');
     }
+
+        public function show(Order $order): View
+    {
+        $order->load('items.product', 'address', 'user');
+
+        return view('admin.orders.show', compact('order'));
+    }
 }

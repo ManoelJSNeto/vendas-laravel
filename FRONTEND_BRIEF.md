@@ -50,6 +50,16 @@ Estrutural:
 - `resources/views/layouts/navigation.blade.php` — menu (desktop + mobile), incluindo o toggle de tema
 - `resources/views/components/*.blade.php` — componentes reutilizáveis (restyle aqui propaga para todo o projeto)
 
+### 4.1. Evitar "cara de IA genérica"
+Muito conteúdo gerado por IA converge para um visual reconhecível e genérico. Para fugir disso:
+- **Não usar** gradientes roxo/azul (`from-indigo-500 to-purple-600` e variações) como base de identidade — é o clichê mais comum de UI gerada por IA.
+- **Não usar** cards genéricos com sombra suave + cantos muito arredondados (`rounded-2xl shadow-lg`) em tudo, sem variação — misture: alguns blocos com borda fina e sem sombra, outros com mais peso visual, para criar hierarquia real.
+- **Evitar** layout perfeitamente centralizado e simétrico em toda a página — dar personalidade com alinhamentos assimétricos onde fizer sentido (ex: cabeçalhos alinhados à esquerda, não centralizados).
+- **Tipografia com hierarquia real**: pelo menos 3 pesos/tamanhos claramente distintos (título de página, subtítulo, corpo), não tudo no mesmo peso "médio" — títulos podem ser mais condensados/impactantes, não apenas "maiores e em negrito".
+- **Espaçamento intencional, não uniforme**: seções mais importantes (resumo do total no carrinho, valor do pedido) merecem mais respiro/destaque que uma linha de tabela comum.
+- Usar a paleta neutra (cinza + azul-marinho) como está pedido acima ajuda bastante a fugir do clichê — evite reintroduzir cores vibrantes "por segurança".
+- Ícones devem ser consistentes em peso de traço (todos outline com a mesma espessura, ou todos preenchidos) — misturar estilos de ícone é outro sinal comum de pressa/geração automática.
+
 ### 5. Observação sobre os gráficos (admin/orders/index.blade.php)
 Os gráficos usam Chart.js carregado via CDN dentro de um bloco `@push('scripts')`. As cores das séries estão hardcoded em JavaScript inline (`borderColor: '#4f46e5'`, `backgroundColor: ['#16a34a', '#eab308']`). Ao aplicar a nova paleta, atualize essas cores para combinar com o tema, e ajuste também para o modo escuro (grid/legendas do Chart.js têm opções de cor de texto que hoje usam o padrão).
 

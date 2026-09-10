@@ -71,6 +71,7 @@
                             <th class="p-3">Status</th>
                             <th class="p-3">Pagamento</th>
                             <th class="p-3 text-right">Total</th>
+                            <th class="p-3"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y">
@@ -101,6 +102,9 @@
                                 <td class="p-3 text-gray-500 capitalize">{{ $order->payment_method }}</td>
                                 <td class="p-3 text-right font-semibold text-green-600">
                                     R$ {{ number_format($order->total, 2, ',', '.') }}
+                                </td>
+                                <td class="p-3 text-right">
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="text-indigo-600 hover:underline text-xs">Ver detalhes</a>
                                 </td>
                             </tr>
                         @endforeach
