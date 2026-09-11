@@ -34,6 +34,9 @@
                         <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
                             {{ __('Admin: Categorias') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.mail-settings.edit')" :active="request()->routeIs('admin.mail-settings.*')">
+                            {{ __('Admin: E-mail') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -108,6 +111,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
                     {{ __('Admin: Categorias') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.mail-settings.edit')" :active="request()->routeIs('admin.mail-settings.*')">
+                    {{ __('Admin: E-mail') }}
                 </x-responsive-nav-link>
             @endif
         </div>
