@@ -75,6 +75,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
     Route::get('/mail-settings', [MailSettingController::class, 'edit'])->name('mail-settings.edit');
     Route::patch('/mail-settings', [MailSettingController::class, 'update'])->name('mail-settings.update');
+    Route::post('/mail-settings/test', [MailSettingController::class, 'sendTest'])->name('mail-settings.test');
 });
 
 require __DIR__.'/auth.php';

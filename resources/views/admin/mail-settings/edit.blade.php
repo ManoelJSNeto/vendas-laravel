@@ -77,6 +77,17 @@
 
                 <x-primary-button>Salvar Configurações</x-primary-button>
             </form>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-2">Testar Configuração</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Envia um e-mail de teste para o seu próprio e-mail ({{ auth()->user()->email }}), usando a configuração salva acima.
+                </p>
+                <form method="POST" action="{{ route('admin.mail-settings.test') }}">
+                    @csrf
+                    <x-secondary-button type="submit">Enviar E-mail de Teste</x-secondary-button>
+                </form>
+            </div>
         </div>
     </div>
 </x-app-layout>

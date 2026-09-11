@@ -7,6 +7,7 @@ use App\Models\MailSetting;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
 
 class MailSettingController extends Controller
 {
@@ -41,5 +42,16 @@ class MailSettingController extends Controller
         $mailSetting->save();
 
         return redirect()->route('admin.mail-settings.edit')->with('status', 'Configurações de e-mail salvas com sucesso!');
+    }
+
+    public function sendTest(Request $request): RedirectResponse
+    {
+        try {
+            Mail::to($request->user()->email)->send(new \App\Mail\TestMail());
+
+            return back()->with('status', 'E-mail de teste enviado para '.$request->user()->email.'!');
+        } catch (\Exception $e) {
+            return back()->with('status', 'Falha ao enviar: '.$e->getMessage());
+        }
     }
 }
