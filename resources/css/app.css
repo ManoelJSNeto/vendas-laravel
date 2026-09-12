@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased selection:bg-navy-800 selection:text-white dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-navy-600 dark:selection:text-white;
+    }
+}
+
